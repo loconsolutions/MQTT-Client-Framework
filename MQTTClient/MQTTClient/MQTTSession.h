@@ -1010,6 +1010,13 @@ withConnectionHandler:(void (^)(MQTTSessionEvent event))connHandler
 
 - (BOOL)publishAndWaitData:(NSData *)data onTopic:(NSString *)topic retain:(BOOL)retainFlag qos:(MQTTQosLevel)qos;
 
+/**
+ *  Same as publishAndWaitData:onTopic:retain:qos: but with a timeout
+ *
+ *  @return Published successfully
+ */
+- (BOOL)publishAndWaitData:(NSData*)data onTopic:(NSString*)topic retain:(BOOL)retainFlag qos:(MQTTQosLevel)qos timeout:(NSTimeInterval)timeout;
+
 /** closes an MQTTSession gracefully
  
  If the connection was successfully established before, a DISCONNECT is sent.
