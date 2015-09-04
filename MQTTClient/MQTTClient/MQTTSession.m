@@ -783,6 +783,42 @@
     }
 }
 
+- (BOOL)publishAndWaitData:(NSData*)data
+                   onTopic:(NSString*)topic
+                    retain:(BOOL)retainFlag
+                       qos:(MQTTQosLevel)qos
+                   timeout:(NSTimeInterval)timeout
+{
+    if (qos != MQTTQosLevelAtMostOnce) {
+        self.synchronPub = TRUE;
+    }
+    
+    UInt16 mid = [self publishData:data onTopic:topic retain:retainFlag qos:qos];
+    if (qos == MQTTQosLevelAtMostOnce) {
+        return TRUE;
+    } else {
+        self.synchronPubMid = mid;
+        
+        __block BOOL timedOut = NO;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, timeout * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+            timedOut = YES;
+        });
+        
+        while (self.synchronPub && !timedOut) {
+            if (DEBUGSESS) NSLog(@"%@ waiting for mid %d", self, mid);
+            [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:.1]];
+        }
+        
+        if (DEBUGSESS) NSLog(@"%@ end publish", self);
+        
+        if (self.synchronPubMid == mid) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    }
+}
+
 - (void)publishData:(NSData*)theData onTopic:(NSString*)theTopic {
     [self publishData:theData onTopic:theTopic retain:NO qos:MQTTQosLevelAtLeastOnce];
 }
