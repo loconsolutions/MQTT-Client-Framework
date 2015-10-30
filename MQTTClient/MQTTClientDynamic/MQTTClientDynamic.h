@@ -28,3 +28,5 @@ FOUNDATION_EXPORT const unsigned char MQTTClientDynamicVersionString[];
 #import <MQTTClientDynamic/MQTTSession.h>
 #import <MQTTClientDynamic/MQTTMessage.h>
 #import <MQTTClientDynamic/MQTTSSLSecurityPolicy.h>
+#import <MQTTClientDynamic/MQTTEncoder.h>
+#import <MQTTClientDynamic/MQTTDecoder.h>
